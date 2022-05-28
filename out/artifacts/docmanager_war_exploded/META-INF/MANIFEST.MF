@@ -1,9 +1,7 @@
 Manifest-Version: 1.0
-Created-By: IntelliJ IDEA
-Built-By: suoDong
-Build-Jdk: 1.8.0_152
 Implementation-Title: docmanager
 Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: Administrator
 Implementation-Vendor-Id: com.hp
-Main-Class: ${start-class}
+Start-Class: com.hp.docmanager.DocmanagerApplication
 

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
  * @Date 2022/4/2 17:22
  */
 
-@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired

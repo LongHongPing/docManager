@@ -17,7 +17,6 @@ import java.util.List;
  * @Date 2022/4/2 17:18
  */
 
-@Service
 public class FileServiceImpl implements FileService {
     @Autowired
     private FileMapper fileMapper;

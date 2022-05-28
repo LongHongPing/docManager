@@ -252,7 +252,7 @@
             } else if (pagesize < 1) {
                 pagesize = 1;
             }
-            window.location.href = '${pageContext.request.contextPath}/file/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
+            window.location.href = '${pageContext.request.contextPath}/user/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
 
         }
 
@@ -268,7 +268,7 @@
                 pagesize = ${pagebean.pagesize};
             }
 
-            window.location.href = '${pageContext.request.contextPath}/file/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
+            window.location.href = '${pageContext.request.contextPath}/user/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
         }
     </script>
 

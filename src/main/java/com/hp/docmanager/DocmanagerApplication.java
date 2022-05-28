@@ -1,5 +1,6 @@
 package com.hp.docmanager;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,8 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-@EnableAutoConfiguration(exclude = {MultipartAutoConfiguration.class})
 @SpringBootApplication
+@MapperScan(basePackages = {"com.hp.docmanager.mapper"})
 public class DocmanagerApplication extends ServletInitalizer{
 
     public static void main(String[] args) {
