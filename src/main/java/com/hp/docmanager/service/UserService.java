@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * @Author hp long
  * @Date 2022/4/2 17:04
  */
-@Service
+
 public interface UserService {
 
     public void createUser(User user) throws Exception;

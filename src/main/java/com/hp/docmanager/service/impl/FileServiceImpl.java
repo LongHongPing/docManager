@@ -17,9 +17,13 @@ import java.util.List;
  * @Date 2022/4/2 17:18
  */
 
+@Service
 public class FileServiceImpl implements FileService {
-    @Autowired
-    private FileMapper fileMapper;
+    private final FileMapper fileMapper;
+
+    public FileServiceImpl(FileMapper fileMapper) {
+        this.fileMapper = fileMapper;
+    }
 
     @Override
     public List<File> getAllFiles(Page page) throws Exception{

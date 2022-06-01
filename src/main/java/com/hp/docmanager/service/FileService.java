@@ -13,7 +13,7 @@ import java.util.List;
  * @Author hp long
  * @Date 2022/4/2 17:13
  */
-@Service
+
 public interface FileService {
 
     public List<File> getAllFiles(Page page) throws Exception;

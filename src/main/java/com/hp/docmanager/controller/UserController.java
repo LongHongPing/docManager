@@ -111,7 +111,7 @@ public class UserController {
         try {
             service.createUser(user); // 如果用户已注册 下层的service会抛出异常}
             // 注册成功，就在upload下分配一个私人的文件夹
-            java.io.File file = new  java.io.File(FileController.storePath+  java.io.File.separator + usernamesignup);
+            java.io.File file = new  java.io.File(FileController.storePath +  java.io.File.separator + usernamesignup);
             file.mkdir();
         }catch(IOException e){
             return "redirect:/400.html";

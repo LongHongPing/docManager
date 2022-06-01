@@ -13,10 +13,14 @@ import org.springframework.stereotype.Service;
  * @Date 2022/4/2 17:22
  */
 
+@Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+
+    public UserServiceImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
     public void createUser(User user) throws Exception{

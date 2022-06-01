@@ -2,6 +2,7 @@ package com.hp.docmanager;
 
 import com.hp.docmanager.mapper.NewsMapper;
 import com.hp.docmanager.model.News;
+import com.hp.docmanager.utils.SecurityUtil;
 import com.hp.docmanager.utils.TextClassificteUtil;
 import com.hp.docmanager.utils.WordFuzzUtil;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
@@ -9,9 +10,12 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import security.misc.HomomorphicException;
+import security.paillier.PaillierCipher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -90,6 +94,29 @@ class DocmanagerApplicationTests {
 
 //        words.add("千方百计");
 //        wordFuzzUtil.baseOnWordTool(words);
+    }
+
+    @Test
+    public void HETest() throws HomomorphicException {
+        SecurityUtil securityUtil = new SecurityUtil();
+        securityUtil.generateHEKeys();
+
+        BigInteger plainInt_1 = new BigInteger(String.valueOf(5));
+        BigInteger plainInt_2 = new BigInteger(String.valueOf(5));
+        BigInteger cipherInt_1 = securityUtil.encryptPlain(plainInt_1);
+        BigInteger cipherInt_2 = securityUtil.encryptPlain(plainInt_2);
+        double plainDouble_1 = 0.65;
+        int plain_1 = (int) (plainDouble_1 * 100);
+//        System.out.println(securityUtil.decryptCipher(securityUtil.add(cipherInt_1, cipherInt_2)));
+        BigInteger cipher1 = securityUtil.mul(cipherInt_1, new BigInteger(String.valueOf(plain_1)));
+        System.out.println(securityUtil.decryptCipher(cipher1));
+
+        double plainDouble_2 = 0.45;
+        int plain_2 = (int) (plainDouble_2 * 100);
+        BigInteger cipher2 = securityUtil.mul(cipherInt_2, new BigInteger(String.valueOf(plain_2)));
+        System.out.println(securityUtil.decryptCipher(cipher2));
+
+        System.out.println(securityUtil.decryptCipher(securityUtil.add(cipher1, cipher2)));
     }
 
 }
