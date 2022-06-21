@@ -35,7 +35,7 @@ public class FileController {
     public static final String storePath = "D:" + File.separator + "work" + File.separator
             + "i Doc" + File.separator + "upload";
     private static final int normallimit = 20 * 1000 * 1000; //普通用户上传单个文件的最大体积 20mb
-    private static final int viplimit = 50 * 1000 * 1000; //普通用户上传单个文件的最大体积 50mb
+    private static final int viplimit = 50 * 1000 * 1000; //vip用户上传单个文件的最大体积 50mb
     private static final int factor = 1000000;  //Mb到字节的转换因子
 
     @Autowired

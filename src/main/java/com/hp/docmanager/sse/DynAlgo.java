@@ -69,43 +69,6 @@ public class DynAlgo {
         return dictionaryUpdates;
     }
 
-//    public static TreeMultimap<String, byte[]> tokenUpdate(byte[] key, Multimap<String, String> lookup)
-//            throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-//            NoSuchProviderException, NoSuchPaddingException, IOException {
-//
-//        // A lexicographic sorted tree to hide order of insertion
-//        TreeMultimap<String, byte[]> tokenUp = TreeMultimap.create(Ordering.natural(), Ordering.usingToString());
-//        // Key generation
-//        SecureRandom random = new SecureRandom();
-//        random.setSeed(CryptoPrimitives.randomSeed(16));
-//        byte[] iv = new byte[16];
-//
-//        for (String word : lookup.keySet()) {
-//
-//            byte[] key1 = CryptoPrimitives.generateCmac(key, 1 + new String());
-//
-//            byte[] key2 = CryptoPrimitives.generateCmac(key, 2 + word);
-//
-//            for (String id : lookup.get(word)) {
-//                random.nextBytes(iv);
-//                int counter = 0;
-//
-//                if (state.get(word) != null) {
-//                    counter = state.get(word);
-//                }
-//
-//                state.put(word, counter + 1);
-//
-//                byte[] l = CryptoPrimitives.generateCmac(key2, "" + counter);
-//
-//                byte[] value = CryptoPrimitives.encryptAES_CTR_String(key1, iv, id, sizeOfFileIdentifer);
-//                tokenUp.put(new String(l), value);
-//            }
-//
-//        }
-//        return tokenUp;
-//    }
-
     public static TreeMultimap<String, BloomFilter> tokenUpdate(byte[] key, Multimap<String, String> lookup)
             throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
             NoSuchProviderException, NoSuchPaddingException, IOException {
@@ -128,16 +91,6 @@ public class DynAlgo {
 
             for (String word : lookup.get(id)) {
                 random.nextBytes(iv);
-//                int counter = 0;
-
-//                if (state.get(id) != null) {
-//                    counter = state.get(id);
-//                }
-//                state.put(id, counter + 1);
-
-//                byte[] l = CryptoPrimitives.generateCmac(key2, "" + counter);
-//                byte[] value = CryptoPrimitives.encryptAES_CTR_String(key1, iv, word, sizeOfFileIdentifer);
-
                 bloomFilter.put(word);
             }
             byte[] value = CryptoPrimitives.encryptAES_CTR_String(key1, iv, id, sizeOfFileIdentifer);
@@ -148,12 +101,6 @@ public class DynAlgo {
     }
 
     /** Update */
-//    public static void update(ConcurrentMap<String, byte[]> dictionary, TreeMultimap<String, byte[]> tokenUp) {
-//
-//        for (String label : tokenUp.keySet()) {
-//            dictionary.put(label, tokenUp.get(label).first());
-//        }
-//    }
     public static void update(ConcurrentMap<String, BloomFilter> dictionary, TreeMultimap<String, BloomFilter> tokenUp) {
         for (String label : tokenUp.keySet()) {
             dictionary.put(label, tokenUp.get(label).first());
@@ -195,25 +142,6 @@ public class DynAlgo {
     }
 
     /** Forward Secure Query */
-//    public static List<byte[]> queryFS(byte[][] keys, ConcurrentMap<String, byte[]> dictionaryUpdates)
-//            throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-//            NoSuchProviderException, NoSuchPaddingException, IOException {
-//
-//        List<byte[]> result = new ArrayList<byte[]>();
-//        positions = new ArrayList<Integer>();
-//
-//        for (int i = 0; i < keys.length; i++) {
-//
-//            if (dictionaryUpdates.get(new String(keys[i])) != null) {
-//                byte[] temp = dictionaryUpdates.get(new String(keys[i]));
-//                // The "positions" list will only contain the counters for which
-//                // a value exists
-//                positions.add(i);
-//                result.add(temp);
-//            }
-//        }
-//        return result;
-//    }
     public static List<String> queryFS(String key, ConcurrentMap<String, BloomFilter> dictionaryUpdates)
             throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
             NoSuchProviderException, NoSuchPaddingException, IOException {
@@ -225,17 +153,6 @@ public class DynAlgo {
                 result.add(file);
             }
         }
-
-//        for (int i = 0; i < keys.length; i++) {
-//
-//            if (dictionaryUpdates.get(new String(keys[i])) != null) {
-//                BloomFilter temp = dictionaryUpdates.get(new String(keys[i]));
-//                // The "positions" list will only contain the counters for which
-//                // a value exists
-//                positions.add(i);
-//                result.add(temp);
-//            }
-//        }
         return result;
     }
 

@@ -15,6 +15,7 @@ import security.paillier.PaillierCipher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -101,22 +102,29 @@ class DocmanagerApplicationTests {
         SecurityUtil securityUtil = new SecurityUtil();
         securityUtil.generateHEKeys();
 
-        BigInteger plainInt_1 = new BigInteger(String.valueOf(5));
-        BigInteger plainInt_2 = new BigInteger(String.valueOf(5));
+        BigInteger plainInt_1 = new BigInteger(String.valueOf(7));
+        BigInteger plainInt_2 = new BigInteger(String.valueOf(4));
         BigInteger cipherInt_1 = securityUtil.encryptPlain(plainInt_1);
         BigInteger cipherInt_2 = securityUtil.encryptPlain(plainInt_2);
-        double plainDouble_1 = 0.65;
+        double plainDouble_1 = 0.5;
         int plain_1 = (int) (plainDouble_1 * 100);
 //        System.out.println(securityUtil.decryptCipher(securityUtil.add(cipherInt_1, cipherInt_2)));
         BigInteger cipher1 = securityUtil.mul(cipherInt_1, new BigInteger(String.valueOf(plain_1)));
-        System.out.println(securityUtil.decryptCipher(cipher1));
+        System.out.println("text1相关度分数明文: " + plainInt_1 + "\n" + "text1相关度分数密文: " + cipherInt_1 + "\n"
+                + "text1加权结果: " + securityUtil.decryptCipher(cipher1));
 
-        double plainDouble_2 = 0.45;
+        System.out.println();
+
+        double plainDouble_2 = 0.5;
         int plain_2 = (int) (plainDouble_2 * 100);
         BigInteger cipher2 = securityUtil.mul(cipherInt_2, new BigInteger(String.valueOf(plain_2)));
-        System.out.println(securityUtil.decryptCipher(cipher2));
+//        System.out.println(securityUtil.decryptCipher(cipher2));
+        System.out.println("text2相关度分数明文: " + plainInt_2 + "\n" + "text2相关度分数密文: " + cipherInt_2 + "\n"
+                + "text2加权结果: " + securityUtil.decryptCipher(cipher2));
 
-        System.out.println(securityUtil.decryptCipher(securityUtil.add(cipher1, cipher2)));
+        BigInteger plainSum = securityUtil.decryptCipher(securityUtil.add(cipher1, cipher2));
+
+        System.out.println("最终排序值(6*0.5+4*0.5)*100: " + plainSum);
+
     }
-
 }
