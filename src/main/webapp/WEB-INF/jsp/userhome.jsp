@@ -95,7 +95,7 @@
                     <td>
                         <form>
                             <select class="custom-select" id="${c.id}"
-                                    onchange="gochange(${pagebean.currentpage},${c.id})">
+                                    onchange="gochange(${pagebean.currentPage},${c.id})">
                                 <c:if test="${c.canshare==0 }">
                                     <option value="0">私有</option>
                                     <option value="1">共享</option>
@@ -109,7 +109,7 @@
                     </td>
                     <td>
                         <a class="btn btn-danger" href="javascript:void(0)"
-                           onclick="godelete(${pagebean.currentpage},${c.id})">删除文件</a>
+                           onclick="godelete(${pagebean.currentPage},${c.id})">删除文件</a>
                     </td>
                 </tr>
             </c:forEach>
@@ -119,7 +119,7 @@
     <br/>
     <p class="text-secondary">
         共[${requestScope.pagebean.totalrecord}]条记录,
-        每页 <input type="text" id="pagesize" value="${pagebean.pagesize }" onchange="gotopage(${pagebean.currentpage})"
+        每页 <input type="text" id="pagesize" value="${pagebean.pageSize }" onchange="gotopage(${pagebean.currentPage})"
                   style="10px" maxlength="5">条
         共[${requestScope.pagebean.totalpage}]页,
         当前是第[${requestScope.pagebean.currentpage}]页,
@@ -128,10 +128,10 @@
     <a class="btn btn-outline-primary" href="javascript:void(0)"
        onclick="gotopage(${requestScope.pagebean.previouspage})">上一页</a>
     <c:forEach var="pagenum" items="${requestScope.pagebean.pagebar}">
-        <c:if test="${pagenum==pagebean.currentpage }">
+        <c:if test="${pagenum==pagebean.currentPage }">
             <font color="red">${pagenum }</font>
         </c:if>
-        <c:if test="${pagenum!=pagebean.currentpage }">
+        <c:if test="${pagenum!=pagebean.currentPage }">
             <a href="javascript:void(0)" onclick="gotopage(${pagenum})">${pagenum}</a>
         </c:if>
     </c:forEach>
@@ -146,8 +146,8 @@
         function godelete(currentpage, fileid) {
             var pagesize = document.getElementById("pagesize").value;
 
-            if (pagesize > 10 || pagesize >= ${pagebean.totalrecord - pagebean.pagesize * ( pagebean.currentpage - 1 )}) {
-                pagesize = Math.min(pagesize, ${pagebean.totalrecord});
+            if (pagesize > 10 || pagesize >= ${pagebean.totalRecord - pagebean.pageSize * ( pagebean.currentPage - 1 )}) {
+                pagesize = Math.min(pagesize, ${pagebean.totalRecord});
                 currentpage = 1;
             } else if (pagesize < 1) {
                 pagesize = 1;
@@ -246,8 +246,8 @@
 
             var pagesize = document.getElementById("pagesize").value;
 
-            if (pagesize > 10 || pagesize >= ${pagebean.totalrecord - pagebean.pagesize * ( pagebean.currentpage - 1 )}) {
-                pagesize = Math.min(10, ${pagebean.totalrecord});
+            if (pagesize > 10 || pagesize >= ${pagebean.totalRecord - pagebean.pageSize * ( pagebean.currentPage - 1 )}) {
+                pagesize = Math.min(10, ${pagebean.totalRecord});
                 currentpage = 1;
             } else if (pagesize < 1) {
                 pagesize = 1;
@@ -260,12 +260,12 @@
 
             var pagesize = document.getElementById("pagesize").value;
 
-            if (currentpage > ${pagebean.totalpage}) {
-                currentpage = ${pagebean.totalpage};
-                pagesize = ${pagebean.pagesize};
+            if (currentpage > ${pagebean.totalPage}) {
+                currentpage = ${pagebean.totalPage};
+                pagesize = ${pagebean.pageSize};
             } else if (currentpage < 1) {
                 currentpage = 1;
-                pagesize = ${pagebean.pagesize};
+                pagesize = ${pagebean.pageSize};
             }
 
             window.location.href = '${pageContext.request.contextPath}/user/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;

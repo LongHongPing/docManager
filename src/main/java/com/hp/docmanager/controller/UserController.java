@@ -1,12 +1,12 @@
 package com.hp.docmanager.controller;
 
+import com.hp.docmanager.config.AppProperties;
 import com.hp.docmanager.model.File;
 import com.hp.docmanager.model.Page;
 import com.hp.docmanager.model.User;
 import com.hp.docmanager.service.FileService;
 import com.hp.docmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +29,8 @@ public class UserController {
     UserService service;
     @Autowired
     FileService fileService;
+    @Autowired
+    private AppProperties appProperties;
 
     @RequestMapping("/login")
     public String login(User user, HttpSession session, HttpServletRequest req) {
@@ -57,11 +59,11 @@ public class UserController {
             return "login";
         }
         page.setFilepath(username);
-        if (page.getCurrentpage() == 0) {   //初值
-            page.setCurrentpage(1);
+        if (page.getCurrentPage() == 0) {   //初值
+            page.setCurrentPage(1);
         }
-        if (page.getPagesize() == 0) {
-            page.setPagesize(5);
+        if (page.getPageSize() == 0) {
+            page.setPageSize(5);
         }
         list = fileService.getUserFiles(page);
 
@@ -77,9 +79,9 @@ public class UserController {
         //拿到每页的数据，每个元素就是一条记录
 
         page.setList(list);
-        page.setCurrentpage(page.getCurrentpage());
-        page.setPagesize(page.getPagesize());
-        page.setTotalrecord(fileService.countUserFiles(username));
+        page.setCurrentPage(page.getCurrentPage());
+        page.setPageSize(page.getPageSize());
+        page.setTotalRecord(fileService.countUserFiles(username));
 
         mv.addAttribute("pagebean", page);
 
@@ -108,10 +110,11 @@ public class UserController {
         User user =new User();
         user.setUsername(usernamesignup);
         user.setPassword(passwordsignup);
+        String storePath = appProperties.getUploadPath();
         try {
             service.createUser(user); // 如果用户已注册 下层的service会抛出异常}
             // 注册成功，就在upload下分配一个私人的文件夹
-            java.io.File file = new  java.io.File(FileController.storePath +  java.io.File.separator + usernamesignup);
+            java.io.File file = new  java.io.File(storePath +  java.io.File.separator + usernamesignup);
             file.mkdir();
         }catch(IOException e){
             return "redirect:/400.html";

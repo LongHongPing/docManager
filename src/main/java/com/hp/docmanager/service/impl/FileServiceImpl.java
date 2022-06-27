@@ -19,6 +19,7 @@ import java.util.List;
 
 @Service
 public class FileServiceImpl implements FileService {
+    @Autowired
     private final FileMapper fileMapper;
 
     public FileServiceImpl(FileMapper fileMapper) {
@@ -27,14 +28,14 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<File> getAllFiles(Page page) throws Exception{
-        page.setSearchcontent("%" + page.getSearchcontent() + "%");
+        page.setSearchContent("%" + page.getSearchContent() + "%");
         return fileMapper.getAllFiles(page);
     }
 
     @Override
-    public int countShareFiles(String searchcontent) throws Exception{
-        searchcontent = "%" + searchcontent + "%";
-        return fileMapper.count(searchcontent);
+    public int countShareFiles(String searchContent) throws Exception{
+        searchContent = "%" + searchContent + "%";
+        return fileMapper.count(searchContent);
     }
 
     @Override

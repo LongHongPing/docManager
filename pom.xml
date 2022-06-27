@@ -164,6 +164,13 @@
             <systemPath>D:/tools/maven-3.3.9/repo/local/crypto.jar</systemPath>
         </dependency>
 
+        <!--  自定义配置注解处理器-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
     <build>

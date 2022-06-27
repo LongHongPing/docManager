@@ -52,18 +52,18 @@
 
 		</table>
 		<br /> 共[${requestScope.pagebean.totalrecord}]条记录, 每页 <input
-			type="text" id="pagesize" value="${pagebean.pagesize }"
-			onchange="gotopage(${pagebean.currentpage})" style="10px"
-			maxlength="5">条 共[${requestScope.pagebean.totalpage}]页,
+            type="text" id="pagesize" value="${pagebean.pageSize }"
+            onchange="gotopage(${pagebean.currentPage})" style="10px"
+            maxlength="5">条 共[${requestScope.pagebean.totalpage}]页,
 		当前是第[${requestScope.pagebean.currentpage}]页, <a class="btn btn-outline-primary"
 			href="javascript:void(0)" onclick="gotopage(1)">回到首页</a> <a class="btn btn-outline-success"
 			href="javascript:void(0)"
 			onclick="gotopage(${requestScope.pagebean.previouspage})">上一页</a>
 		<c:forEach var="pagenum" items="${requestScope.pagebean.pagebar}">
-			<c:if test="${pagenum==pagebean.currentpage }">
+			<c:if test="${pagenum==pagebean.currentPage }">
 				<font color="red">${pagenum }</font>
 			</c:if>
-			<c:if test="${pagenum!=pagebean.currentpage }">
+			<c:if test="${pagenum!=pagebean.currentPage }">
 				<a href="javascript:void(0)" onclick="gotopage(${pagenum})">${pagenum}</a>
 			</c:if>
 		</c:forEach>
@@ -80,8 +80,8 @@
     	  var pagesize = document.getElementById("pagesize").value;
     	  var searchcontent = document.getElementById("searchcontent").value;
     	  
-    	  if(pagesize > 10 || pagesize >= ${pagebean.totalrecord - pagebean.pagesize * ( pagebean.currentpage - 1 )}){
-    		  pagesize = Math.min(pagesize,${pagebean.totalrecord});
+    	  if(pagesize > 10 || pagesize >= ${pagebean.totalRecord - pagebean.pageSize * ( pagebean.currentPage - 1 )}){
+    		  pagesize = Math.min(pagesize,${pagebean.totalRecord});
     		  currentpage = 1 ;
     	  }else if(pagesize < 1){
     		  pagesize = 1;
@@ -95,12 +95,12 @@
     	  var pagesize = document.getElementById("pagesize").value;
     	  var searchcontent = document.getElementById("searchcontent").value;
     	  
-    	  if(currentpage > ${pagebean.totalpage}){
-    		  currentpage = ${pagebean.totalpage};
-    		  pagesize = ${pagebean.pagesize};
+    	  if(currentpage > ${pagebean.totalPage}){
+    		  currentpage = ${pagebean.totalPage};
+    		  pagesize = ${pagebean.pageSize};
     	  }else if(currentpage < 1){
     		  currentpage = 1 ;
-    		  pagesize = ${pagebean.pagesize};
+    		  pagesize = ${pagebean.pageSize};
     	  }
     	  
     	  window.location.href = '${pageContext.request.contextPath}/file/listfiles.action?currentpage='+currentpage+'&pagesize='+ pagesize+'&searchcontent='+searchcontent;

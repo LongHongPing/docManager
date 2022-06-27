@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hp.docmanager.mapper.FileMapper">
+    <insert id="insertFile">
+        INSERT INTO icloud.file (filename,filepath,filesize,createtime,canshare,user_id,MD5)
+        VALUES(#{filename},#{filepath},#{filesize},#{createtime},#{canshare},#{user_id},#{MD5})
+    </insert>
+    <update id="updateFileById">
+        UPDATE FILE
+        SET canshare = #{canshare}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteFileById">
+        DELETE FROM FILE
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getAllFiles" resultType="com.hp.docmanager.model.File">
+        SELECT *
+        FROM file
+        WHERE canshare = 1 AND filename LIKE #{searchcontent}
+        LIMIT #{startindex},#{pagesize}
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        SELECT COUNT(id) totalrecord
+        FROM file
+        WHERE canshare=1 AND filename LIKE #{searchContent}
+    </select>
+    <select id="findFilepathById" resultType="java.lang.String">
+        SELECT file.filepath
+        FROM file
+        WHERE id = #{id}
+    </select>
+    <select id="getUserFiles" resultType="com.hp.docmanager.model.File">
+        SELECT *
+        FROM file
+        WHERE filepath = #{filepath}
+        order by createtime desc
+        LIMIT #{startindex}, #{pagesize}
+    </select>
+    <select id="countUserFiles" resultType="java.lang.Integer">
+        SELECT COUNT(id) totalrecord
+        FROM file
+        WHERE filepath = #{username}
+    </select>
+    <select id="findFilenameById" resultType="java.lang.String">
+        SELECT file.filename
+        FROM file
+        WHERE id = #{id}
+    </select>
+</mapper>

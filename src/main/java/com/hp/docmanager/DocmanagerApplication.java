@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 @SpringBootApplication
-@MapperScan(basePackages = {"mapper"})
+@MapperScan("com.hp.docmanager.mapper")
 public class DocmanagerApplication extends ServletInitalizer{
 
     public static void main(String[] args) {

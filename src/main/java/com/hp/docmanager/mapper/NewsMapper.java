@@ -1,11 +1,11 @@
 package com.hp.docmanager.mapper;
 
 import com.hp.docmanager.model.News;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Service
+@Repository
 public interface NewsMapper {
     List<News> findAll();
 

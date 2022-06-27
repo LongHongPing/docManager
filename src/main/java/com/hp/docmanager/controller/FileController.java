@@ -1,10 +1,13 @@
 package com.hp.docmanager.controller;
 
+import com.hp.docmanager.config.AppProperties;
 import com.hp.docmanager.model.Page;
 import com.hp.docmanager.service.FileService;
 import com.hp.docmanager.service.UserService;
 import com.hp.docmanager.utils.GeneralUtil;
 import com.hp.docmanager.utils.MD5Util;
+import com.hp.docmanager.utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,12 +31,12 @@ import static java.lang.System.out;
  * @Author hp long
  * @Date 2022/4/6 11:48
  */
+
+@Slf4j
 @Controller
 @RequestMapping("/file")
 public class FileController {
 
-    public static final String storePath = "D:" + File.separator + "work" + File.separator
-            + "i Doc" + File.separator + "upload";
     private static final int normallimit = 20 * 1000 * 1000; //普通用户上传单个文件的最大体积 20mb
     private static final int viplimit = 50 * 1000 * 1000; //vip用户上传单个文件的最大体积 50mb
     private static final int factor = 1000000;  //Mb到字节的转换因子
@@ -42,31 +45,23 @@ public class FileController {
     private FileService fileService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AppProperties appProperties;
 
     @RequestMapping("/upload")
     public String upload(@RequestParam("file") CommonsMultipartFile file, HttpSession Session, HttpServletRequest req, String MD5) {
         //session域存的username和传进来的username一致，说明用户名没有造假
-        String user_name = (String) Session.getAttribute("user_name");
-        if (user_name == null || "".equals(user_name)) {
+        String userName = (String) Session.getAttribute("user_name");
+        if (userName == null || "".equals(userName)) {
             return "login";
         }
 
-        //从数据库查询该用户是否为vip
-        Integer isvip = null;
-        try {
-            isvip = userService.isVip(user_name);
-            //把是否是vip的信息带到userhome主页，用于在客户端限制文件上传大小
-            req.setAttribute("isvip", isvip);
-        } catch (Exception e) {
-            e.printStackTrace();
-            req.setAttribute("message", "未知错误，请重试");
-            return "redirect:/searchUserfile";
-        }
-
+        String storePath = appProperties.getUploadPath();
+        String srcPath = appProperties.getTempPath() + File.separator + userName;
         File store = null;  //目的文件
         try {
             //存在每个用户有一个自己名字命名的文件夹
-            store = new File(storePath + File.separator + user_name, file.getOriginalFilename());
+            store = new File(srcPath,file.getOriginalFilename());
         } catch (Exception e) {
             req.setAttribute("message", "请先选择文件！");
             return "redirect:/searchUserfile";
@@ -74,26 +69,29 @@ public class FileController {
 
         long size = file.getSize();  //上传文件的大小
 
-        if (false == checkFile(store, storePath, isvip, size, req)) {
-            return "redirect:/searchUserfile"; //检查文件大小等是否符合要求
+        if (!checkFile(store, size, req)) {
+            req.setAttribute("message", "请检查文件！");
+            return "redirect:/searchUserfile";
         }
 
-        //todo  encrypt
         com.hp.docmanager.model.File fileModel = new com.hp.docmanager.model.File();
         //把文件信息存入数据库
         fileModel.setCreatetime(new Date(new java.util.Date().getTime()));
         fileModel.setFilename(file.getOriginalFilename());
-        fileModel.setFilepath(user_name);
+        fileModel.setFilepath(userName);
         fileModel.setFilesize(String.valueOf(size / 1024 + 1));
         fileModel.setCanshare(0);
         fileModel.setMD5(MD5);
         MD5Util.MAP.put(MD5, fileModel);
-        //todo 检查用户的云空间是否超过限额
+
+        String encPath = storePath + File.separator + file.getOriginalFilename();
         Integer flag = null;
         try {
-            fileModel.setUser_id(userService.findUserID(user_name));
+            fileModel.setUser_id(userService.findUserID(userName));
             flag = fileService.insertFile(fileModel);
             file.transferTo(store);
+            srcPath = srcPath + File.separator + userName + File.separator + file.getOriginalFilename();
+            SecurityUtil.encode(srcPath, encPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,36 +101,13 @@ public class FileController {
         return "redirect:/searchUserfile";
     }
 
-    @RequestMapping("/FastUpload")
-    public String fastUpload(HttpSession session, String MD5) {
-        String username = (String) session.getAttribute("user_name");
-        com.hp.docmanager.model.File source = MD5Util.MAP.get(MD5);
-        String SourthPath = storePath + File.separator + source.getFilepath() + File.separator + source.getFilename();
-        String userPath = storePath + File.separator + username + File.separator + source.getFilename();
-        fileService.copyFile(SourthPath, userPath);
-        source.setFilepath(username);
-        try {
-            source.setUser_id(userService.findUserID(username));
-            fileService.insertFile(source);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "redirect:/searchUserfile";
-    }
-
-    private boolean checkFile(File store, String storePath, int isvip, long size, HttpServletRequest req) {
+    private boolean checkFile(File store, long size, HttpServletRequest req) {
         if (store.exists()) {
             req.setAttribute("message", "文件已存在");
             return false;
         }
         if (size == 0) {
             req.setAttribute("message", "文件大小不能为0");
-            return false;
-        } else if (isvip == 0 && size > normallimit) {
-            req.setAttribute("message", "普通用户最大只能上传" + normallimit / factor + "Mb的文件");
-            return false;
-        } else if (isvip == 1 && size > viplimit) {
-            req.setAttribute("message", "VIP用户最大只能上传" + viplimit / factor + "Mb的文件");
             return false;
         } else {
             return true;
@@ -141,13 +116,13 @@ public class FileController {
 
     @RequestMapping("/searchFile")
     public String Search(String searchcontent, Page page, Model mv) {
-        if(page.getPagesize() == 0){
-            page.setPagesize((5));
+        if(page.getPageSize() == 0){
+            page.setPageSize((5));
         }
-        if (page.getCurrentpage() == 0) {
-            page.setCurrentpage(1);
+        if (page.getCurrentPage() == 0) {
+            page.setCurrentPage(1);
         }
-        page.setSearchcontent(searchcontent);
+        page.setSearchContent(searchcontent);
 //        PageBean pageBean = new PageBean();
         List<com.hp.docmanager.model.File> fileList;
         try {
@@ -158,10 +133,10 @@ public class FileController {
         }
         //拿到每页的数据，每个元素就是一条记录
         page.setList(fileList);
-        page.setCurrentpage(page.getCurrentpage());
-        page.setPagesize(page.getPagesize());
+        page.setCurrentPage(page.getCurrentPage());
+        page.setPageSize(page.getPageSize());
         try {
-            page.setTotalrecord(fileService.countShareFiles(searchcontent));
+            page.setTotalRecord(fileService.countShareFiles(searchcontent));
         } catch (Exception e2) {
             e2.printStackTrace();
         }
@@ -181,9 +156,14 @@ public class FileController {
                 req.setAttribute("message", "对不起，您要下载的资源已被删除");
                 return "help";
             }
-            path = "C:" + File.separator + "upload" + File.separator + path;
+//            path = "C:" + File.separator + "upload" + File.separator + path;
+            //解密
+            path = appProperties.getUploadPath() + File.separator + filename;
+            String deFile = appProperties.getTempPath() + File.separator + filename;
+            SecurityUtil.decode(path, deFile);
 
-            File file = new File(path + File.separator + filename);
+            //下载
+            File file = new File(deFile);
             long fileLength = file.length(); // 记录文件大小
             long pastLength = 0; // 记录已下载文件大小
             int rangeSwitch = 0; // 0：从头开始的全文下载；1：从某字节开始的下载（bytes=27000-）；2：从某字节开始到某字节结束的下载（bytes=27000-39000）
@@ -220,7 +200,7 @@ public class FileController {
                 // 不是从最开始下载,
                 // 响应的格式是:
                 // Content-Range: bytes [文件块的开始字节]-[文件的总大小 - 1]/[文件的总大小]
-                System.out.println("----------------------------不是从开始进行下载！服务器即将开始断点续传...");
+                log.info("不是从开始进行下载,服务器即将开始断点续传...");
                 switch (rangeSwitch) {
                     case 1: { // 针对 bytes=27000- 的请求
                         String contentRange = new StringBuffer("bytes ").append(new Long(pastLength).toString()).append("-").append(new Long(fileLength - 1).toString()).append("/").append(new Long(fileLength).toString()).toString();
@@ -238,7 +218,7 @@ public class FileController {
                 }
             } else {
                 // 是从开始下载
-                System.out.println("----------------------------是从开始进行下载！");
+                log.info("是从开始进行下载");
             }
             try {
                 rep.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(filename,"UTF-8"));
@@ -281,25 +261,21 @@ public class FileController {
                     }
                     out.flush();
                 } catch (IOException ie) {
-                    /**
-                     * 在写数据的时候， 对于 ClientAbortException 之类的异常， 是因为客户端取消了下载，而服务器端继续向浏览器写入数据时， 抛出这个异常，这个是正常的。 尤其是对于迅雷这种吸血的客户端软件， 明明已经有一个线程在读取 bytes=1275856879-1275877358， 如果短时间内没有读取完毕，迅雷会再启第二个、第三个。。。线程来读取相同的字节段， 直到有一个线程读取完毕，迅雷会 KILL 掉其他正在下载同一字节段的线程， 强行中止字节读出，造成服务器抛 ClientAbortException。 所以，我们忽略这种异常
-                     */
-                    // ignore
-                    System.out.println("#提醒# 向客户端传输时出现IO异常，但此异常是允许的的，有可能客户端取消了下载，导致此异常，不用关心！");
+                    log.info("向客户端传输时出现IO异常，但此异常是允许的的，有可能客户端取消了下载，导致此异常，不用关心！");
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             } finally {
                 if (out != null) {
                     try {
                         out.close();
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
 
                     }
                 }
                 if (raf != null) {
                     try {
                         raf.close();
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
                     }
                 }
             }
@@ -317,7 +293,7 @@ public class FileController {
             //检查该文件是否属于该用户,否则不允许修改文件状态
             String username = fileService.findFilepathById(id);
             String login_user = (String) Session.getAttribute("user_name");
-            if (username != null && login_user.equals(username)) {
+            if (login_user.equals(username)) {
                 fileService.updateFileById(canshare, id);
             } else { //不通过，可能是人为篡改数据，转发至首页
                 req.setAttribute("globalmessage", "该文件可能不属于你");
@@ -341,7 +317,7 @@ public class FileController {
             String username = fileService.findFilepathById(id);
             String login_user = (String) Session.getAttribute("user_name");
             String filename = fileService.findFilenameById(id); //查出文件名
-            if (username != null && login_user.equals(username)) {
+            if (login_user.equals(username)) {
                 fileService.deleteFileById(id); //删除数据库的该文件记录
                 //从硬盘上删除文件
                 String storepath = new String("C:" + File.separator + "upload" + File.separator + login_user + File.separator);

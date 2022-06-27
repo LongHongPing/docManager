@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Lazy
 @Configuration
 public class WordSegUtil {
     private static final Logger logger = LoggerFactory.getLogger(WordSegUtil.class);

@@ -1,12 +1,19 @@
 package com.hp.docmanager.utils;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+
 /**
  * Description:
  * 通用工具类
  * @Author hp long
  * @Date 2022/4/2 15:53
  */
+
+@Slf4j
 public class GeneralUtil {
+    private static Logger logger;
+
     public static String setContentType(String returnFileName) {
         String contentType = "application/octet-stream";
         if ( returnFileName.lastIndexOf(".") < 0)
