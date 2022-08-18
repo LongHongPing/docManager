@@ -4,14 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>注册</title>
+<title>DocDisk注册</title>
 </head>
 <body>
-  <div><a href="${pageContext.request.contextPath}/user/requestin.action" >log in</a>  &nbsp;
+  <div><a href="${pageContext.request.contextPath}/requestin.action" >log in</a>  &nbsp;
        <a href="${pageContext.request.contextPath}/index.jsp" >首页</a> 
   </div>
-   <center>
-	   <form action="${pageContext.request.contextPath}/user/logup.action" method="post" style="margin: 200px">
+   <div style="text-align: center;">
+	   <form action="${pageContext.request.contextPath}/logup.action" method="post" style="margin: 200px">
 	   <table>
 	       <tr>
 	          <td>用户名</td><td><input type="text" name="username" >${usernameerror}</td>
@@ -24,6 +24,6 @@
 	       </tr>
 	   </table>
 	   </form>
-   </center>
+   </div>
 </body>
 </html>

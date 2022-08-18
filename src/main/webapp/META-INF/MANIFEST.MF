@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: docmanager
-Implementation-Version: 0.0.1-SNAPSHOT
-Built-By: Administrator
-Implementation-Vendor-Id: com.hp
-Start-Class: com.hp.docmanager.DocmanagerApplication
-

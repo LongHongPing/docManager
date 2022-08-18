@@ -5,50 +5,47 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>我的i Doc</title>
+    <title>我的Doc Disk</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="css/nav.css">
 
-    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="../js/spark-md5.js"></script>
+    <script type="text/javascript" src="js/spark-md5.js"></script>
 </head>
 <body>
 
 <nav class="top-right">
-    <a class="disc l1" href="${pageContext.request.contextPath}/user/requestout">
+    <a class="disc l1" href="${pageContext.request.contextPath}/requestout">
         <div>注销</div>
     </a>
-    <a class="disc l2" href="${pageContext.request.contextPath}/user/index">
+    <a class="disc l2" href="${pageContext.request.contextPath}/index">
         <div>主页</div>
     </a>
-    <a class="disc l3" href="${pageContext.request.contextPath}/user/help">
-        <div>帮助</div>
-    </a>
     <a class="disc l4 toggle">
-        Menu
+        菜单
     </a>
 </nav>
-<script src="../js/nav.js"></script>
+<script src="js/nav.js"></script>
 
-<div style="font-size: 24px ; text-align: center">欢迎你登陆i Doc
+<div style="font-size: 24px ; text-align: center">欢迎你登陆Doc Disk
     <div style="font-size: 20px; color: green;font-style: oblique; float:inherit; ">${user_name}</div>
 </div>
 
 <hr color="blue" size="2"/>
 <br/>
 
-<form action="${pageContext.request.contextPath}/file/upload" method="post" enctype="multipart/form-data">
-    <input type="submit" class="btn btn-outline-danger" onclick="return checkfile()" value="上传文件"/>
+<form action="${pageContext.request.contextPath}/upload" method="post" enctype="multipart/form-data">
     <input class="btn btn-outline-primary" type="file" onchange="checkfile()" id="fileupload" name="file"
-           onpropertychange="getFileSize(this.value)"/><br/>
+           onpropertychange="getFileSize(this.value)"/>
+    <input type="submit" class="btn btn-outline-danger" onclick="return checkfile()" value="上传文件"/><br/>
     <input type="hidden" name="username" value="${user_name}"/><br/>
     <input type="hidden" name="MD5" id="md5"/>
      <img id="tempimg" dynsrc="" src="" style="display:none"/>  
     ${message }
     <div id="box"></div>
-    <button class="btn btn-outline-danger" id="cal" type="button" onclick="calculate()">点击检查是否支持急速上传</button>
+<%--    <button class="btn btn-outline-danger" id="cal" type="button" onclick="calculate()">点击检查是否支持急速上传</button>--%>
 </form>
 <br/>
 <hr color="red" size="2"/>
@@ -67,7 +64,7 @@
     </style>
 
     <br/>
-    <div style="font-size: 30px ; color: yellow ; font-style: italic;"><font> In i Doc</font></div>
+    <div style="font-size: 30px ; color: deepskyblue ; font-style: italic;"><font> In Doc Disk</font></div>
 
     <br/>
     <table class="table table-hover table-borderless" frame="border" width="100%" align="center">
@@ -90,12 +87,12 @@
                     <td>${c.createtime }</td>
                     <td>
                         <a class="btn btn-success"
-                           href="${pageContext.request.contextPath}/file/download?id=${c.id }&filename=${c.filename }">下载</a>
+                           href="${pageContext.request.contextPath}/download?id=${c.id }&filename=${c.filename }">下载</a>
                     </td>
                     <td>
                         <form>
                             <select class="custom-select" id="${c.id}"
-                                    onchange="gochange(${pagebean.currentPage},${c.id})">
+                                    onchange="gochange(${pagebean.currentpage},${c.id})">
                                 <c:if test="${c.canshare==0 }">
                                     <option value="0">私有</option>
                                     <option value="1">共享</option>
@@ -109,7 +106,7 @@
                     </td>
                     <td>
                         <a class="btn btn-danger" href="javascript:void(0)"
-                           onclick="godelete(${pagebean.currentPage},${c.id})">删除文件</a>
+                           onclick="godelete(${pagebean.currentpage},${c.id})">删除文件</a>
                     </td>
                 </tr>
             </c:forEach>
@@ -119,7 +116,7 @@
     <br/>
     <p class="text-secondary">
         共[${requestScope.pagebean.totalrecord}]条记录,
-        每页 <input type="text" id="pagesize" value="${pagebean.pageSize }" onchange="gotopage(${pagebean.currentPage})"
+        每页 <input type="text" id="pagesize" value="${pagebean.pagesize }" onchange="gotopage(${pagebean.currentpage})"
                   style="10px" maxlength="5">条
         共[${requestScope.pagebean.totalpage}]页,
         当前是第[${requestScope.pagebean.currentpage}]页,
@@ -128,10 +125,10 @@
     <a class="btn btn-outline-primary" href="javascript:void(0)"
        onclick="gotopage(${requestScope.pagebean.previouspage})">上一页</a>
     <c:forEach var="pagenum" items="${requestScope.pagebean.pagebar}">
-        <c:if test="${pagenum==pagebean.currentPage }">
+        <c:if test="${pagenum==pagebean.currentpage }">
             <font color="red">${pagenum }</font>
         </c:if>
-        <c:if test="${pagenum!=pagebean.currentPage }">
+        <c:if test="${pagenum!=pagebean.currentpage }">
             <a href="javascript:void(0)" onclick="gotopage(${pagenum})">${pagenum}</a>
         </c:if>
     </c:forEach>
@@ -146,8 +143,8 @@
         function godelete(currentpage, fileid) {
             var pagesize = document.getElementById("pagesize").value;
 
-            if (pagesize > 10 || pagesize >= ${pagebean.totalRecord - pagebean.pageSize * ( pagebean.currentPage - 1 )}) {
-                pagesize = Math.min(pagesize, ${pagebean.totalRecord});
+            if (pagesize > 10 || pagesize >= ${pagebean.totalrecord - pagebean.pagesize * ( pagebean.currentpage - 1 )}) {
+                pagesize = Math.min(pagesize, ${pagebean.totalrecord});
                 currentpage = 1;
             } else if (pagesize < 1) {
                 pagesize = 1;
@@ -155,7 +152,7 @@
 
             var r = confirm("确认删除文件？");
             if (r == true) {
-                window.location.href = '${pageContext.request.contextPath}/file/deleteFile?currentpage=' + currentpage + '&pagesize=' + pagesize + '&id=' + fileid;
+                window.location.href = '${pageContext.request.contextPath}/deleteFile?currentpage=' + currentpage + '&pagesize=' + pagesize + '&id=' + fileid;
             } else {
                 return false;
             }
@@ -167,7 +164,7 @@
             var pagesize = document.getElementById("pagesize").value;
             var r = confirm("如果设置共享，您的文件将可以被其他人搜索到");
             if (r == true) {
-                window.location.href = '${pageContext.request.contextPath}/file/Share?currentpage=' + currentpage + '&pagesize=' + pagesize + '&id=' + fileid + '&canshare=' + canshare;
+                window.location.href = '${pageContext.request.contextPath}/Share?currentpage=' + currentpage + '&pagesize=' + pagesize + '&id=' + fileid + '&canshare=' + canshare;
             } else {
                 location.reload();
             }
@@ -239,6 +236,8 @@
 
                 fileReader.readAsBinaryString(blobSlice.call(file, start, end));
             };
+
+
             loadNext();
         }
 
@@ -246,13 +245,13 @@
 
             var pagesize = document.getElementById("pagesize").value;
 
-            if (pagesize > 10 || pagesize >= ${pagebean.totalRecord - pagebean.pageSize * ( pagebean.currentPage - 1 )}) {
-                pagesize = Math.min(10, ${pagebean.totalRecord});
+            if (pagesize > 10 || pagesize >= ${pagebean.totalrecord - pagebean.pagesize * ( pagebean.currentpage - 1 )}) {
+                pagesize = Math.min(10, ${pagebean.totalrecord});
                 currentpage = 1;
             } else if (pagesize < 1) {
                 pagesize = 1;
             }
-            window.location.href = '${pageContext.request.contextPath}/user/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
+            window.location.href = '${pageContext.request.contextPath}/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
 
         }
 
@@ -260,15 +259,15 @@
 
             var pagesize = document.getElementById("pagesize").value;
 
-            if (currentpage > ${pagebean.totalPage}) {
-                currentpage = ${pagebean.totalPage};
-                pagesize = ${pagebean.pageSize};
+            if (currentpage > ${pagebean.totalpage}) {
+                currentpage = ${pagebean.totalpage};
+                pagesize = ${pagebean.pagesize};
             } else if (currentpage < 1) {
                 currentpage = 1;
-                pagesize = ${pagebean.pageSize};
+                pagesize = ${pagebean.pagesize};
             }
 
-            window.location.href = '${pageContext.request.contextPath}/user/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
+            window.location.href = '${pageContext.request.contextPath}/searchUserfile?currentpage=' + currentpage + '&pagesize=' + pagesize;
         }
     </script>
 
@@ -276,8 +275,8 @@
     <script type="text/javascript">
         var vipmaxsize = 50 * 1024 * 1024;
         var normalmaxsize = 20 * 1024 * 1024;
-        var viperrMsg = "VIP用户上传的附件文件不能超过50M！！！";
-        var normalerrMsg = "普通用户上传的附件文件不能超过20M！！！";
+        var viperrMsg = "用户上传的附件文件不能超过50M！！！";
+        var normalerrMsg = "用户上传的附件文件不能超过20M！！！";
         var tipMsg = "建议使用chrome firefox ie等浏览器";
         var browserCfg = {};
         //下面一段鉴别使用者的浏览器
@@ -315,8 +314,8 @@
                 } else if (isvip == 1 && filesize > vipmaxsize) {
                     alert(viperrMsg);
                     return false;
-                } else if (isvip == 0 && filesize > normalmaxsize) {
-                    alert(normalerrMsg);
+                } else if (isvip == 0 && filesize > vipmaxsize) {
+                    alert(viperrMsg);
                     return false;
                 } else {
                     return true;
@@ -332,11 +331,3 @@
 
 </body>
 </html>
-
-
-
-
-		
-		
-		
-

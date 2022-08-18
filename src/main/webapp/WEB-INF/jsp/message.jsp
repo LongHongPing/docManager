@@ -10,7 +10,7 @@
 	<script type="text/javascript">
 		var time = 5; //时间,秒
 		function Redirect() {
-		    window.location = "${pageContext.request.contextPath}/user/index";
+		    window.location = "${pageContext.request.contextPath}/index";
 		}
 		var i = 0;
 		function dis() {
